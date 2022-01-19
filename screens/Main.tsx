@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import Navigation from '../types';
-// import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import { useWalletConnect } from '../WalletConnect';
 import { useMoralis } from 'react-moralis';
 import { enableMoralisViaWalletConnect } from '../enableMoralisViaMoralis';
+import { useNFTBalance } from '../hooks/useNFTBalance';
+import { useMoralisDapp } from '../providers/MoralisDappProvider';
+import { ethers, providers } from 'ethers';
+import { EtherscanProvider } from '@ethersproject/providers';
 
 export default function Main({ navigation }: any) {
 	const {
@@ -19,19 +22,22 @@ export default function Main({ navigation }: any) {
 	} = useMoralis();
 	const connector = useWalletConnect();
 	const [account, setAccount] = useState('');
+	const { NFTBalance, isLoading } = useNFTBalance();
 
-	async function authAccount() {
-		await authenticate({ connector });
+	async function getEns(address) {}
 
-		if (authError) {
-			console.log(authError);
+	useEffect(() => {
+		console.log(isAuthenticated);
+		if (user?.get('accounts').length) {
+			console.log(getEns(user.get('accounts')[0]));
+			setAccount(user.get('accounts')[0]);
 		} else {
-			if (isAuthenticated) {
-				setAccount(user?.get('accounts')[0]);
-				console.log('LO');
-			}
+			setAccount('');
 		}
-	}
+		if (!isLoading && NFTBalance.length) {
+			// console.log(JSON.stringify(NFTBalance[0]));
+		}
+	}, [user?.get('accounts'), isAuthenticated, NFTBalance, isLoading]);
 
 	return (
 		<View style={styles.container}>
@@ -43,23 +49,21 @@ export default function Main({ navigation }: any) {
 				title='Go to Second Page'
 			/>
 			<Button
-				onPress={
-					() => authAccount()
-					// setAccount('Loading');
-					// authenticate({ connector })
-					// 	.then(() => {
-					// 		console.log(isAuthenticated, JSON.stringify(authError));
-					// 		if (authError) {
-					// 			console.log(authError.message);
-					// 	} else {
-					// 		if (isAuthenticated) {
-					// 			setAccount(user?.get('accounts')[0]);
-					// 			console.log('LO');
-					// 		}
-					// 	}
-					// })
-					// 	.catch(() => {});
-				}
+				onPress={() => {
+					setAccount('Loading');
+
+					authenticate({ connector })
+						.then(() => {
+							if (authError) {
+								console.log(authError.message);
+							} else {
+								if (isAuthenticated) {
+									console.log('Auth');
+								}
+							}
+						})
+						.catch(() => {});
+				}}
 				title='CONNECT'
 			/>
 			<Button
@@ -74,7 +78,7 @@ export default function Main({ navigation }: any) {
 			/>
 			<Button
 				onPress={() => {
-					logout().then(console.log(user?.get('accounts')[0]));
+					logout().then(() => console.log(user?.get('accounts')[0]));
 				}}
 				title='DISCONNECT'
 			/>
