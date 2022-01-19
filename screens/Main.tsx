@@ -1,20 +1,41 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import Navigation from '../types';
-import { useWalletConnect } from '@walletconnect/react-native-dapp';
-import { getWeb3 } from '../getWeb3';
+// import { useWalletConnect } from '@walletconnect/react-native-dapp';
+import { useWalletConnect } from '../WalletConnect';
 import { useMoralis } from 'react-moralis';
-import { useEffect } from 'react';
+import { enableMoralisViaWalletConnect } from '../enableMoralisViaMoralis';
 
 export default function Main({ navigation }: any) {
+	const {
+		web3,
+		Moralis,
+		user,
+		authenticate,
+		authError,
+		isAuthenticated,
+		logout,
+	} = useMoralis();
 	const connector = useWalletConnect();
-	const { isAuthenticated, user, authenticate, authError } = useMoralis();
+	const [account, setAccount] = useState('');
+
+	async function authAccount() {
+		await authenticate({ connector });
+
+		if (authError) {
+			console.log(authError);
+		} else {
+			if (isAuthenticated) {
+				setAccount(user?.get('accounts')[0]);
+				console.log('LO');
+			}
+		}
+	}
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.textContent}>
-				This is the Main {JSON.stringify(isAuthenticated)}
-			</Text>
+			<Text style={styles.textContent}>This is the Main {account} </Text>
 			<Button
 				onPress={() => {
 					(navigation as Navigation).navigate('Second Page');
@@ -22,29 +43,38 @@ export default function Main({ navigation }: any) {
 				title='Go to Second Page'
 			/>
 			<Button
-				onPress={() => {
-					//Todo use authenticate from useMoralis.
-					connector
-						.connect()
-						.then((connector) =>
-							console.log('Account connected ' + connector.accounts[0])
-						);
-				}}
+				onPress={
+					() => authAccount()
+					// setAccount('Loading');
+					// authenticate({ connector })
+					// 	.then(() => {
+					// 		console.log(isAuthenticated, JSON.stringify(authError));
+					// 		if (authError) {
+					// 			console.log(authError.message);
+					// 	} else {
+					// 		if (isAuthenticated) {
+					// 			setAccount(user?.get('accounts')[0]);
+					// 			console.log('LO');
+					// 		}
+					// 	}
+					// })
+					// 	.catch(() => {});
+				}
 				title='CONNECT'
 			/>
 			<Button
-				onPress={() => {
-					connector.sendTransaction({
-						from: connector.accounts[0],
-						to: '0x083196134F3a49fe441cB0ae6a702f9ECb2Bb14d',
-						value: '10000000000000000',
-					});
+				onPress={async () => {
+					// connector.sendTransaction({
+					//   from: connector.accounts[0],
+					//   to: "0x083196134f3a49fe441cb0ae6a702f9ecb2bb14d",
+					//   value: "10000000000000000"
+					// })
 				}}
 				title='SEND'
 			/>
 			<Button
 				onPress={() => {
-					connector.killSession();
+					logout().then(console.log(user?.get('accounts')[0]));
 				}}
 				title='DISCONNECT'
 			/>
@@ -61,6 +91,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	textContent: {
-		fontWeight: 'bold',
+		fontFamily: 'bank-gothic-light',
 	},
 });
