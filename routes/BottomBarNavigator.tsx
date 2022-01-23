@@ -16,26 +16,56 @@ export default function RootNavigator() {
 			<BottomTab.Navigator
 				initialRouteName='Home'
 				screenOptions={({ route }) => ({
-					tabBarStyle: { backgroundColor: '#F98F07' },
+					tabBarStyle: {
+						backgroundColor: '#F98F07',
+						justifyContent: 'center',
+						alignContent: 'space-between',
+						paddingTop: 5,
+					},
 					tabBarHideOnKeyboard: true,
-					tabBarActiveTintColor: 'white',
-					tabBarInactiveTintColor: '#973EF5',
-					tabBarIcon: () => {
+					tabBarIcon: ({ focused }) => {
 						switch (route.name) {
 							case 'Home':
-								return null;
+								return (
+									<Ionicons
+										name={focused ? 'home-sharp' : 'home-outline'}
+										size={30}
+										color={'white'}
+									/>
+								);
 							case 'Explore':
-								return <FontAwesome5 name='compass' size={24} />;
+								return (
+									<Ionicons
+										name={focused ? 'compass-sharp' : 'compass-outline'}
+										size={30}
+										color={'white'}
+									/>
+								);
 							case 'Conversations':
-								return <Ionicons name='md-chatbubble-sharp' size={24} />;
+								return (
+									<Ionicons
+										name={focused ? 'chatbubbles-sharp' : 'chatbubbles-outline'}
+										size={30}
+										color={'white'}
+									/>
+								);
 							default:
 								return null;
 						}
 					},
+					tabBarShowLabel: false,
+					headerTitleStyle: { color: 'white' },
+					headerStyle: { backgroundColor: '#F98F07' },
 				})}
 			>
 				<BottomTab.Screen name='Explore' component={Explore} />
-				<BottomTab.Screen name='Home' component={Home} />
+				<BottomTab.Screen
+					name='Home'
+					component={Home}
+					options={{
+						headerTitle: 'Herd',
+					}}
+				/>
 				<BottomTab.Screen name='Conversations' component={Chats} />
 			</BottomTab.Navigator>
 		</NavigationContainer>
