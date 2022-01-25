@@ -9573,6 +9573,13 @@ react-native-dotenv@^3.3.1:
   dependencies:
     dotenv "^10.0.0"
 
+react-native-fab@^1.0.18:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/react-native-fab/-/react-native-fab-1.0.18.tgz#a3079f6d91250d57eccec34f34aa2551312fdb8b"
+  integrity sha512-MBa0sTIsNTyJtEclYMQ3mNRwPdB13VLLG4BYAbs7/+MxZt4+3xcmZdF47ceqb5OY/Z1sZQB/gOHtOZtAcEiyXg==
+  dependencies:
+    prop-types "^15.6.0"
+
 react-native-get-random-values@~1.7.0:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.7.2.tgz#60a9b6497d22e713779b71139f016a5fcec7ac04"

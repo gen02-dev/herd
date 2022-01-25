@@ -26,6 +26,6 @@ export default function App() {
 		);
 	}
 
-	// return isAuthenticated ? <RootNavigator /> : <SignIn />;
-	return <RootNavigator />;
+	return isAuthenticated ? <RootNavigator /> : <SignIn />;
+	// return <RootNavigator />;
 }
